@@ -1,0 +1,2 @@
+theComic = None
+theDate = None

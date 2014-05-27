@@ -1,8 +1,5 @@
-import urllib2, base64
-import datetime, config, io
-from PIL import Image, ImageTk
-from StringIO import StringIO
-
+import urllib2, base64, cStringIO
+import datetime, allGlobals, io
 
 class GoComic(object):
     def __init__(self, url, name):
@@ -29,7 +26,7 @@ class GoComic(object):
             print("OH NO! EMPTY")
             return "empty"
         
-        page = self.url+str(config.theDate.date()).replace("-","/")
+        page = self.url+str(allGlobals.theDate.date()).replace("-","/")
         print(page)         
         req = urllib2.Request(page, headers=self.hdr)
         response = urllib2.urlopen(req)
@@ -38,16 +35,20 @@ class GoComic(object):
         key = findImageURLKey(html)
         print("URL " +"http://assets.amuniversal.com/" + key)
         return "http://assets.amuniversal.com/" + key
-    
-    def getPILImage(self):
+   
+    def getBase64Image(self):
         picReq = urllib2.Request(self.fetchImageURL(), headers=self.hdr)
-        fd = urllib2.urlopen(picReq)
-        image_file = fd.read()
-        print(str(type(image_file)))       
-        print(str(type(StringIO(image_file))))
-        comicImage = Image.open(StringIO(image_file))
-        return ImageTk.PhotoImage(comicImage)
-        
+        u = urllib2.urlopen(picReq)
+        raw_data = u.read()
+        return base64.encodestring(raw_data)    
+    #===========================================================================
+    # def getPILImage(self):
+    #     picReq = urllib2.Request(self.fetchImageURL(), headers=self.hdr)
+    #     picresponse = urllib2.urlopen(picReq)
+    #     raw_data = picresponse.read() 
+    #     photo = tk. base64.encodestring(raw_data)
+    #===========================================================================
+
     def getName(self):
         return self.name
     

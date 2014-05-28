@@ -9,10 +9,14 @@ def tk_GiveWindowMainMenu(window, ComicDict):
     
     #Required because of limited scope to the command element of menu option
     def loadCommand(comicName):
+        print("loading Comic: "+ comicName)
         tk_switchComic(window, ComicDict[comicName])
 
-    for comic in ComicDict.values():  
-        ComicSelectionMenu.add_command(label=comic.getName(), command=lambda: loadCommand(comic.getName()))
+    for comic in ComicDict.values():
+        #note comic=comic snapshots the for loop and gives lambda a default value
+        #without it only the last comic will show for all lambda functions
+        ComicSelectionMenu.add_command(label=comic.getName(), command=lambda comic=comic: loadCommand(comic.getName()))
+        print("Comic Added: "+ comic.getName())
     menubar.add_cascade(label="Comics", menu=ComicSelectionMenu)
     
     window.config(menu=menubar)
@@ -27,7 +31,7 @@ def tk_switchComic(window, ComicDictInstance):
     else:
         window.children['titleLabel'].config(text=allGlobals.theComic.getName())
     #get the Base 64 Image and format it as a GIF
-    theComicImage = PIL_format64AsGIF(allGlobals.theComic.getBase64Image())
+    theComicImage = allGlobals.theComic.getTkImage()
     #draw it to the canvas
     try:
         tk_setImageInCanvas(window, theComicImage)
@@ -66,19 +70,19 @@ def tk_setImageInCanvas(window, thePhoto):
     print("Connected Image")
     #window.children["comicFrame"].pack()
     print("switchedComic")
-    
-def PIL_format64AsGIF(inImage):
-    if allGlobals.theDate.isoweekday() != 7:
-        ("print if")
-        returnpic = tk.PhotoImage(data=inImage)
-    else:
-        print("else")
-        jpg_str = base64.b64decode(inImage)
-        jpg_data = io.BytesIO(jpg_str)
-        
-        pil_image = Image.open(jpg_data)
-        returnpic = ImageTk.PhotoImage(pil_image)
-    return returnpic
+#------------------------------------------------------------------------------ 
+#----------------------------------------------- def PIL_format64AsGIF(inImage):
+    #---------------------------------- if allGlobals.theDate.isoweekday() != 7:
+        #---------------------------------------------------------- ("print if")
+        #------------------------------- returnpic = tk.PhotoImage(data=inImage)
+    #--------------------------------------------------------------------- else:
+        #--------------------------------------------------------- print("else")
+        #----------------------------------- jpg_str = base64.b64decode(inImage)
+        #---------------------------------------- jpg_data = io.BytesIO(jpg_str)
+#------------------------------------------------------------------------------ 
+        #-------------------------------------- pil_image = Image.open(jpg_data)
+        #----------------------------- returnpic = ImageTk.PhotoImage(pil_image)
+    #---------------------------------------------------------- return returnpic
 
 def tk_GiveWindowNavigation(window):
         

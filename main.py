@@ -1,9 +1,15 @@
 from ComicTk import *
-import PearlsBeforeSwine
+from GoComicStrips import *
 import datetime, allGlobals
 
 ComicDict = {
-            "Pearls Before Swine" : PearlsBeforeSwine.PearlsBeforeSwineInstance() 
+            "Calvin And Hobbes" : CalvinAndHobbesInstance(),
+            "Garfield": GarfieldInstance(),
+            "Get Fuzzy": GetFuzzyInstance(),
+            "Herman": HermanInstance(),
+            "Luann": LuannInstance(),
+            "Pearls Before Swine" : PearlsBeforeSwineInstance(),
+            "Pickles": PicklesInstance()
             }
 
 def main():

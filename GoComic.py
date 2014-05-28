@@ -1,5 +1,6 @@
 import urllib2, base64, cStringIO
 import datetime, allGlobals, io
+from PIL import Image, ImageTk
 
 class GoComic(object):
     def __init__(self, url, name):
@@ -40,7 +41,21 @@ class GoComic(object):
         picReq = urllib2.Request(self.fetchImageURL(), headers=self.hdr)
         u = urllib2.urlopen(picReq)
         raw_data = u.read()
-        return base64.encodestring(raw_data)    
+        return base64.encodestring(raw_data)
+    
+    def getTkImage(self):
+        #get Url
+        url = self.fetchImageURL()
+        #open url
+        image_bytes = urllib2.urlopen(url).read()
+        #internal data file
+        data_stream = io.BytesIO(image_bytes)
+        #open as PIL Image object
+        pil_image = Image.open(data_stream)
+        #get size of image
+        tk_image = ImageTk.PhotoImage(pil_image)
+        
+        return tk_image
     #===========================================================================
     # def getPILImage(self):
     #     picReq = urllib2.Request(self.fetchImageURL(), headers=self.hdr)

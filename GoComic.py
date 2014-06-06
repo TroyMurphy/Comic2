@@ -1,4 +1,5 @@
-import urllib2, base64, cStringIO
+import urllib2 as urllib
+import cStringIO
 import datetime, allGlobals, io
 from PIL import Image, ImageTk
 
@@ -29,8 +30,8 @@ class GoComic(object):
         
         page = self.url+str(allGlobals.theDate.date()).replace("-","/")
         print(page)         
-        req = urllib2.Request(page, headers=self.hdr)
-        response = urllib2.urlopen(req)
+        req = urllib.Request(page, headers=self.hdr)
+        response = urllib.urlopen(req)
         html = response.readlines()
         #print(html)
         key = findImageURLKey(html)
@@ -38,8 +39,8 @@ class GoComic(object):
         return "http://assets.amuniversal.com/" + key
    
     def getBase64Image(self):
-        picReq = urllib2.Request(self.fetchImageURL(), headers=self.hdr)
-        u = urllib2.urlopen(picReq)
+        picReq = urllib.Request(self.fetchImageURL(), headers=self.hdr)
+        u = urllib.urlopen(picReq)
         raw_data = u.read()
         return base64.encodestring(raw_data)
     
@@ -47,7 +48,7 @@ class GoComic(object):
         #get Url
         url = self.fetchImageURL()
         #open url
-        image_bytes = urllib2.urlopen(url).read()
+        image_bytes = urllib.urlopen(url).read()
         #internal data file
         data_stream = io.BytesIO(image_bytes)
         #open as PIL Image object

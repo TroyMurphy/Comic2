@@ -1,9 +1,12 @@
 from ComicTk import *
 from GoComicStrips import *
+from CyanideAndHappinessStrip import *
 import datetime, allGlobals
+from collections import OrderedDict
 
 ComicDict = {
             "Calvin And Hobbes" : CalvinAndHobbesInstance(),
+            "Cyanide And Happiness": CyanideAndHappinessInstance(),
             "Garfield": GarfieldInstance(),
             "Get Fuzzy": GetFuzzyInstance(),
             "Herman": HermanInstance(),
@@ -12,11 +15,13 @@ ComicDict = {
             "Pickles": PicklesInstance()
             }
 
+ComicDict = OrderedDict(sorted(ComicDict.items(), key=lambda t: t[0]))
+
 def main():
     root = tk.Tk()
     root = tk_GiveWindowMainMenu(root, ComicDict)
     root = tk_initializeCanvas(root)
-    root = tk_GiveWindowNavigation(root)
+    root = tk_GiveWindowNavigation(root, ComicDict)
 
     root.mainloop()
 

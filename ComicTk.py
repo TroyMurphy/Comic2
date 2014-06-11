@@ -3,21 +3,41 @@ import base64, io, imghdr
 from PIL import Image, ImageTk
 import datetime, allGlobals
 
-def tk_GiveWindowMainMenu(window, ComicDict):
-    menubar = tk.Menu(window)
-    ComicSelectionMenu = tk.Menu(menubar, tearoff=0)
-    
+def tk_GiveWindowMainMenu(window, ComicDict):    
     #Required because of limited scope to the command element of menu option
     def loadCommand(comicName):
-        print("loading Comic: "+ comicName)
+        #print("loading Comic: "+ comicName)
         tk_switchComic(window, ComicDict[comicName])
 
+    def exportSelection():
+        ypos = 0
+        for instance in ComicDict.values():
+            photo = instance.getTkImage()
+            tk_setImageInCanvas(window, photo, (0,ypos))
+            ypos += 200
+        
+            
+    def editSelection():
+        pass
+    
+    def resetComicToNone():
+        theComic = None
+        
+    menubar = tk.Menu(window)
+    ComicSelectionMenu = tk.Menu(menubar, tearoff=0, name="mainMenu")
+    ComicSelectionMenu.add_command(label="All", command= resetComicToNone)
     for comic in ComicDict.values():
         #note comic=comic snapshots the for loop and gives lambda a default value
         #without it only the last comic will show for all lambda functions
         ComicSelectionMenu.add_command(label=comic.getName(), command=lambda comic=comic: loadCommand(comic.getName()))
         print("Comic Added: "+ comic.getName())
+        
+    ExportMenu = tk.Menu(menubar, tearoff=0)
+    ExportMenu.add_command(label="View Selection", command=exportSelection)
+    ExportMenu.add_command(label="Edit Selection", command=editSelection)
+    
     menubar.add_cascade(label="Comics", menu=ComicSelectionMenu)
+    menubar.add_cascade(label="Select", menu=ExportMenu)
     
     window.config(menu=menubar)
     return window
@@ -29,14 +49,16 @@ def tk_switchComic(window, ComicDictInstance):
         titleLabel = tk.Label(master = window, text=allGlobals.theComic.getName(), font=("Arial", 16), name="titleLabel")
         titleLabel.pack(side="top")
     else:
+        titleLabel = tk.Label(master = window, text="All Comics", font=("Arial", 16), name="titleLabel")
         window.children['titleLabel'].config(text=allGlobals.theComic.getName())
     #get the Base 64 Image and format it as a GIF
     theComicImage = allGlobals.theComic.getTkImage()
+    if theComicImage != None:
     #draw it to the canvas
-    try:
-        tk_setImageInCanvas(window, theComicImage)
-    except:
-        print("You suck")
+        try:
+            tk_setImageInCanvas(window, theComicImage)
+        except:
+            print("Image Failed To Load In Canvas")
     
 def tk_initializeCanvas(window):
     #create frame for scrollbars and canvas
@@ -62,38 +84,40 @@ def tk_initializeCanvas(window):
     frame.pack(side="bottom")    
     return window
 
-def tk_setImageInCanvas(window, thePhoto):
+def tk_setImageInCanvas(window, thePhoto, postuple=(0,0)):
     theCanvas = window.children["comicFrame"].children["comicCanvas"]
     print("Found canvas")
-    theCanvas.create_image(0,0, image=thePhoto,anchor=tk.NW, )
-    theCanvas.image = thePhoto
-    print("Connected Image")
-    #window.children["comicFrame"].pack()
-    print("switchedComic")
-#------------------------------------------------------------------------------ 
-#----------------------------------------------- def PIL_format64AsGIF(inImage):
-    #---------------------------------- if allGlobals.theDate.isoweekday() != 7:
-        #---------------------------------------------------------- ("print if")
-        #------------------------------- returnpic = tk.PhotoImage(data=inImage)
-    #--------------------------------------------------------------------- else:
-        #--------------------------------------------------------- print("else")
-        #----------------------------------- jpg_str = base64.b64decode(inImage)
-        #---------------------------------------- jpg_data = io.BytesIO(jpg_str)
-#------------------------------------------------------------------------------ 
-        #-------------------------------------- pil_image = Image.open(jpg_data)
-        #----------------------------- returnpic = ImageTk.PhotoImage(pil_image)
-    #---------------------------------------------------------- return returnpic
-
-def tk_GiveWindowNavigation(window):
+    theCanvas.create_image(postuple[0],postuple[1], image=thePhoto, anchor=tk.NW)
+    try:
+        theCanvas.refs
+    except AttributeError:
+        theCanvas.refs = []
         
+    theCanvas.refs.append(thePhoto)
+    print("Connected Image")
+
+def tk_GiveWindowNavigation(window, ComicDict):
+    
+    def exportAll():
+        ypos = 0
+        for instance in ComicDict.values():
+            photo = instance.getTkImage()
+            tk_setImageInCanvas(window, photo, (0,ypos))
+            ypos += 20 + photo._PhotoImage__size[1]
+            
     def writeRefresh():
+        try:
+            window.children["comicFrame"].children["comicCanvas"].delete(tk.ALL)
+        except Exception, e:
+            print("Could not clear canvas. %s" % e)
+            pass
         print(allGlobals.theDate)
         dateEntry.delete(0, tk.END)
         dateEntry.insert(0, str(allGlobals.theDate.date()).replace("-","/"))
         if type(allGlobals.theComic) != type(None):
             tk_switchComic(window, allGlobals.theComic)
         else:
-            print("No Comic Selected")
+            exportAll()
         
     def fetchYesterday():
         allGlobals.theDate = allGlobals.theDate - datetime.timedelta(days=1)
@@ -116,7 +140,7 @@ def tk_GiveWindowNavigation(window):
     def fetchToday():
         allGlobals.theDate = datetime.datetime.today()
         writeRefresh()
-        
+            
     navigationFrame = tk.Frame(master=window, name="navigationFrame")
     dateFrame = tk.Frame(master=window, name='dateFrame')
     
@@ -139,3 +163,5 @@ def tk_GiveWindowNavigation(window):
     dateFrame.pack(side="top")
     
     return window
+
+    

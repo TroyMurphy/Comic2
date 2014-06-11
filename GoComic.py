@@ -37,13 +37,7 @@ class GoComic(object):
         key = findImageURLKey(html)
         print("URL " +"http://assets.amuniversal.com/" + key)
         return "http://assets.amuniversal.com/" + key
-   
-    def getBase64Image(self):
-        picReq = urllib.Request(self.fetchImageURL(), headers=self.hdr)
-        u = urllib.urlopen(picReq)
-        raw_data = u.read()
-        return base64.encodestring(raw_data)
-    
+
     def getTkImage(self):
         #get Url
         url = self.fetchImageURL()

@@ -12,16 +12,19 @@ def tk_GiveWindowMainMenu(window, ComicDict):
     def exportSelection():
         ypos = 0
         for instance in ComicDict.values():
-            photo = instance.getTkImage()
-            tk_setImageInCanvas(window, photo, (0,ypos))
-            ypos += 200
-        
+            try:
+                photo = instance.getTkImage()
+                tk_setImageInCanvas(window, photo, (0,ypos))
+                ypos += 20 + photo._PhotoImage__size[1]
+            except:
+                print("Skipped "+instance.getName())
+                pass
             
     def editSelection():
         pass
     
     def resetComicToNone():
-        theComic = None
+        allGlobals.theComic = None
         
     menubar = tk.Menu(window)
     ComicSelectionMenu = tk.Menu(menubar, tearoff=0, name="mainMenu")
@@ -50,7 +53,7 @@ def tk_switchComic(window, ComicDictInstance):
         titleLabel.pack(side="top")
     else:
         titleLabel = tk.Label(master = window, text="All Comics", font=("Arial", 16), name="titleLabel")
-        window.children['titleLabel'].config(text=allGlobals.theComic.getName())
+        titleLabel.pack(side="top")
     #get the Base 64 Image and format it as a GIF
     theComicImage = allGlobals.theComic.getTkImage()
     if theComicImage != None:
@@ -101,9 +104,13 @@ def tk_GiveWindowNavigation(window, ComicDict):
     def exportAll():
         ypos = 0
         for instance in ComicDict.values():
-            photo = instance.getTkImage()
-            tk_setImageInCanvas(window, photo, (0,ypos))
-            ypos += 20 + photo._PhotoImage__size[1]
+            try:
+                photo = instance.getTkImage()
+                tk_setImageInCanvas(window, photo, (0,ypos))
+                ypos += 20 + photo._PhotoImage__size[1]
+            except:
+                print("Skipped "+instance.getName())
+                pass
             
     def writeRefresh():
         try:

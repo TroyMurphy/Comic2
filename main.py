@@ -1,12 +1,17 @@
 from ComicTk import *
 from GoComicStrips import *
 from CyanideAndHappinessStrip import *
+from DilbertStrip import *
+from BabyBluesStrip import *
 import datetime, allGlobals
 from collections import OrderedDict
 
 ComicDict = {
+             # Need to decrypt javascript before safrking images can be used
+             #"Baby Blues" : BabyBluesInstance(),
             "Calvin And Hobbes" : CalvinAndHobbesInstance(),
             "Cyanide And Happiness": CyanideAndHappinessInstance(),
+            "Dilbert": DilbertInstance(),
             "Garfield": GarfieldInstance(),
             "Get Fuzzy": GetFuzzyInstance(),
             "Herman": HermanInstance(),
